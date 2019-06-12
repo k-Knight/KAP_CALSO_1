@@ -1,0 +1,112 @@
+<?xml version ="1.0" encoding = "UTF-8"?>
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jtestcase.sourceforge.net/dtd/jtestcase2.xsd">
+    <class name="IntList">
+        <method name="add">
+            <test-case name="Normal">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                        <param name="item" type="java.lang.Integer">0</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                    </param>
+                </params>
+                <asserts>
+                    <assert name="length" type="int" action="EQUALS">4</assert>
+                    <assert name="cum_result" type="boolean" action="EQUALS">true</assert>
+                </asserts>
+            </test-case>
+        </method>
+        <method name="clear">
+            <test-case name="Normal">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                        <param name="item" type="java.lang.Integer">3</param>
+                    </param>
+                </params>
+                <asserts>
+                    <assert name="length" type="int" action="EQUALS">0</assert>
+                </asserts>
+            </test-case>
+        </method>
+        <method name="remove">
+            <test-case name="zero">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                        <param name="item" type="java.lang.Integer">3</param>
+                    </param>
+                    <param name="rm_item" type="int">2</param>
+                </params>
+                <asserts>
+                    <assert name="length" type="int" action="EQUALS">3</assert>
+                    <assert name="result" type="boolean" action="EQUALS">false</assert>
+                </asserts>
+            </test-case>
+            <test-case name="one">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                        <param name="item" type="java.lang.Integer">3</param>
+                    </param>
+                    <param name="rm_item" type="int">5</param>
+                </params>
+                <asserts>
+                    <assert name="length" type="int" action="EQUALS">2</assert>
+                    <assert name="result" type="boolean" action="EQUALS">true</assert>
+                </asserts>
+            </test-case>
+            <test-case name="two">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                        <param name="item" type="java.lang.Integer">3</param>
+                        <param name="item" type="java.lang.Integer">5</param>
+                        <param name="item" type="java.lang.Integer">3</param>
+                    </param>
+                    <param name="rm_item" type="int">3</param>
+                </params>
+                <asserts>
+                    <assert name="length" type="int" action="EQUALS">2</assert>
+                    <assert name="result" type="boolean" action="EQUALS">true</assert>
+                </asserts>
+            </test-case>
+        </method>
+        <method name="toString">
+            <test-case name="empty">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                    </param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">empty</assert>
+                </asserts>
+            </test-case>
+            <test-case name="one">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">1</param>
+                    </param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">1</assert>
+                </asserts>
+            </test-case>
+            <test-case name="two">
+                <params>
+                    <param name="contents" type="java.util.Vector">
+                        <param name="item" type="java.lang.Integer">3</param>
+                        <param name="item" type="java.lang.Integer">1</param>
+                    </param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">3 1</assert>
+                </asserts>
+            </test-case>
+        </method>
+    </class>
+</tests>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="run" name="kap_calso_deliverable_1" basedir=".">
+
+
+
+	<!-- ======================   PROPERTIES   ========================= -->
+
+
+
+	<property name="user" value="k-knight" />
+    <property name="libs" value="lib"/>
+
+	<property name="src" value="src" />
+	<property name="sourceRoot" value="${src}/main/java" />
+	<property name="testRoot" value="${src}/test/java" />
+
+	<property name="build" value="build" />
+	<property name="dist" value="dist" />
+	<property name="doc" value="doc" />
+	<property name="junit" value="junit" />
+	<property name="package" value="com.kknight.example.ass1" />
+	<property name="cobertura.instrument" value="cobertura/instrumented-classes" />
+
+	<property name="report" value="report" />
+	<property name="junit.rep" value="${report}/junit" />
+	<property name="cover.rep" value="${report}/coverage" />
+	<property name="mutan.rep" value="${report}/mutation" />
+
+	<property name="cobertura" value="C:\JAVA\cobertura" />
+
+
+
+	<!-- ======================   IMPORTS   ========================= -->
+
+
+
+	<import file="C:\JAVA\junitpdfreport\build-junitpdfreport.xml"/>
+
+
+
+	<!-- ======================   PATHS   ========================= -->
+
+
+
+	<path id="test.classpath">
+		<pathelement location="${build}"/>
+		<pathelement location="${libs}\junit-4.12.jar"/>
+		<fileset dir="${libs}" includes="*.jar" />
+	</path>
+
+	<path id="test.jar">
+		<pathelement location="${junit}"/>
+		<pathelement location="${build}/Test.jar"/>
+	</path>
+
+	<path id="cobertura.classpath">
+		<fileset dir="${cobertura}" >
+			<include name="cobertura-2.1.1.jar" />
+			<include name="lib/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="pitest.path">
+   		<pathelement location="lib/junit-4.12.jar" />
+		<pathelement location="lib/xstream-1.4.8.jar" />
+		<pathelement location="lib/xmlpull-1.1.3.1.jar" />
+		<pathelement location="lib/pitest-1.2.0.jar" />
+		<pathelement location="lib/pitest-entry-1.2.0.jar" />
+		<pathelement location="lib/pitest-ant-1.2.0.jar" />
+		<fileset dir="${libs}" includes="*.jar" />
+	</path>
+
+	<path id="test.path">
+		<pathelement location="${junit}/classes" />
+		<pathelement location="${junit}/test-classes" />
+		<pathelement location="lib/junit-4.9.jar" />
+		<fileset dir="${libs}" includes="*.jar" />
+	</path>
+
+
+
+	<!-- ======================   TASK DEFINITIONS   ========================= -->
+
+
+
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
+	<taskdef name="pitest" classname="org.pitest.ant.PitestTask" classpathref="pitest.path" />
+
+
+
+	<!-- ======================   TARGETS   ========================= -->
+
+
+
+	<target name="initialize">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${doc}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${doc}"/>
+	</target>
+
+	<target name="createzip" depends="initialize">
+		<zip destfile="${dist}/tuprograma.zip" basedir = "." includes = "${src}/**/*.java, build.xml"/>
+	</target>
+
+	<target name="document" depends="initialize">
+		<javadoc sourcepath="${sourceRoot}" destdir="${doc}"/>
+	</target>
+
+	<target name="compile" depends="clean, initialize">
+        <javac includeantruntime="false" srcdir="${sourceRoot}" destdir="${build}" debug="true">
+    		<classpath refid="cobertura.classpath" />
+        </javac>
+	</target>
+
+	<target name="createjar" depends="compile">
+		<jar destfile="${build}/Test.jar" basedir="${build}" includes="**/*.class">
+		    <manifest>
+		      	<attribute name="Main-Class" value="${package}.Main"/>
+		    	<attribute name="Built-By" value="${user}" />
+		    </manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="compile">
+		<java classname="${package}.Main" classpath="${build}" fork="true"/>
+	</target>
+
+	<target name="runjar" depends="createjar">
+		<java jar="${build}/Test.jar" fork="true"/>
+	</target>
+
+
+
+	<!-- ======================   TESTING COVERAGE   ========================= -->
+
+
+
+	<target name="init-junit">
+		<mkdir dir="${junit}"/>
+	</target>
+
+	<target name="clean-junit">
+		<delete dir="${junit}"/>
+	</target>
+
+	<target name="compile-junit" depends="clean-junit, init-junit, createjar">
+        <javac includeantruntime="false" srcdir="${testRoot}" destdir="${junit}" debug="true">
+	       	<classpath refid="test.classpath"/>
+        </javac>
+	</target>
+
+	<target name="init-report">
+		<mkdir dir="${report}"/>
+	</target>
+
+	<target name="clean-report">
+		<delete dir="${report}"/>
+	</target>
+
+	<target name="instrument" depends="compile">
+		<delete file="cobertura.ser"/>
+		<delete dir="${cobertura.instrument}"/>
+		<cobertura-instrument todir="${cobertura.instrument}">
+			<fileset dir="${build}">
+				<include name="**/*.class" />
+				<exclude name="**/Main*.class" />
+			</fileset>
+		</cobertura-instrument>
+	</target>
+
+	<target name="run-junit" depends="compile-junit, init-report, instrument">
+		<mkdir dir="${junit.rep}"/>
+		<junit fork="yes" printsummary="yes" haltonfailure="no">
+			<classpath>
+				<pathelement path="${cobertura.instrument}" />
+			</classpath>
+			<classpath refid="test.jar"/>
+			<classpath refid="cobertura.classpath"/>
+			<classpath refid="test.classpath"/>
+
+			<formatter type="xml"/>
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="cobertura.ser" />
+
+		    <batchtest todir="${junit.rep}">
+		        <fileset dir="${junit}">
+		            <include name="**/*Test.class"/>
+		        </fileset>
+		    </batchtest>
+		</junit>
+	</target>
+
+	<target name="junit-rep" depends="run-junit">
+		<junitreport todir="${junit.rep}">
+		    <fileset dir="${junit.rep}">
+		        <include name="TEST-*.xml"/>
+		    </fileset>
+		    <report format="frames" todir="${junit.rep}/html"/>
+		</junitreport>
+		<junitpdfreport todir="${junit.rep}" styledir="structural">
+		    <fileset dir="${junit.rep}">
+		        <include name="TEST-*.xml"/>
+		    </fileset>
+		</junitpdfreport>
+	</target>
+
+	<target name="cover-rep" depends="junit-rep">
+		<cobertura-report srcdir="${sourceRoot}" destdir="${cover.rep}/html" />
+	</target>
+
+	<target name="check-cover" depends="cover-rep">
+		<cobertura-check totallinerate="75" totalbranchrate="75">
+			<regex pattern="${package}.IntList" branchrate="85" linerate="85"/>
+			<regex pattern="${package}.CommandType" branchrate="85" linerate="85"/>
+			<regex pattern="${package}.Command" branchrate="85" linerate="85"/>
+		</cobertura-check>
+	</target>
+
+
+
+	<!-- ======================   MUTATION TESTING   ========================= -->
+
+
+
+	<target name="mut-compile" depends="clean, initialize, clean-junit, init-junit">
+		<mkdir dir="${junit}/classes" />
+		<javac srcdir="${sourceRoot}" includeantruntime="false" debug="true" debuglevel="source,lines" destdir="${junit}/classes">
+			<include name="com/**"/>
+			<exclude name="com/**/Main*"/>
+		</javac>
+
+	</target>
+
+	<target name="mut-test" depends="init-report, mut-compile">
+		<mkdir dir="${junit}/test-result" />
+		<mkdir dir="${junit}/test-classes" />
+		<mkdir dir="${junit.rep}"/>
+
+		<javac includeantruntime="false" srcdir="${testRoot}" destdir="${junit}/test-classes">
+			<classpath refid="test.path" />
+		</javac>
+
+		<junit>
+			<classpath refid="test.path" />
+			<batchtest todir="${junit}/test-result">
+				<fileset dir="${junit}">
+					<include name="**/*Test.java" />
+				</fileset>
+				<formatter type="xml" />
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${junit.rep}">
+			<fileset dir="${junit}/test-result">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.rep}/report" />
+		</junitreport>
+
+	</target>
+
+	<target name="mut-cover" depends="mut-test">
+		<path id="mutation.path">
+			<path refid="pitest.path"/>
+			<path refid="test.path"/>
+		</path>
+		<pitest pitClasspath="pitest.path"
+			threads="4"
+			classPath="mutation.path"
+			targetTests="com.*"
+			targetClasses="com.*"
+			reportDir="${mutan.rep}"
+			sourceDir="${sourceRoot}" />
+	</target>
+
+
+</project>

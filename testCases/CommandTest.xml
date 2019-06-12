@@ -1,0 +1,197 @@
+<?xml version ="1.0" encoding = "UTF-8"?>
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jtestcase.sourceforge.net/dtd/jtestcase2.xsd">
+    <class name="Command">
+        <method name="toString">
+            <test-case name="toString">
+                <params>
+                    <param name="command_str" type="String">add 5</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">Action: add Param: 5</assert>
+                </asserts>
+            </test-case>
+            <test-case name="toString_onfail">
+                <params>
+                    <param name="command_str" type="String">sda 5 342 242 242</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">Action: udf Param: 0</assert>
+                </asserts>
+            </test-case>
+        </method>
+        <method name="parseAction">
+            <test-case name="clear">
+                <params>
+                    <param name="action_string" type="String">clear</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">clr</assert>
+                </asserts>
+            </test-case>
+            <test-case name="remove">
+                <params>
+                    <param name="action_string" type="String">remove</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">rem</assert>
+                </asserts>
+            </test-case>
+            <test-case name="add">
+                <params>
+                    <param name="action_string" type="String">add</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">add</assert>
+                </asserts>
+            </test-case>
+            <test-case name="print">
+                <params>
+                    <param name="action_string" type="String">print</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">prt</assert>
+                </asserts>
+            </test-case>
+            <test-case name="undefined">
+                <params>
+                    <param name="action_string" type="String">asdasda</param>
+                </params>
+                <asserts>
+                    <assert name="result" type="String" action="EQUALS">udf</assert>
+                </asserts>
+            </test-case>
+        </method>
+        <method name="CommandConstructor">
+            <test-case name="clear_correct">
+                <params>
+                    <param name="action_string" type="String">clear</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">clr</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">STRING_EMPTY</assert>
+                </asserts>
+            </test-case>
+            <test-case name="clear_fail">
+                <params>
+                    <param name="action_string" type="String">clear 0</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: excessive parameter(s)</assert>
+                </asserts>
+            </test-case>
+            <test-case name="undefined">
+                <params>
+                    <param name="action_string" type="String">adfasdf 32423 234234</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: unrecognized command</assert>
+                </asserts>
+            </test-case>
+            <test-case name="add_correct">
+                <params>
+                    <param name="action_string" type="String">add 1</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">add</assert>
+                    <assert name="parameter" type="int" action="EQUALS">1</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">STRING_EMPTY</assert>
+                </asserts>
+            </test-case>
+            <test-case name="add_fail1">
+                <params>
+                    <param name="action_string" type="String">add</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: missing parameter</assert>
+                </asserts>
+            </test-case>
+            <test-case name="add_fail2">
+                <params>
+                    <param name="action_string" type="String">add 1 2</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: excessive parameter(s)</assert>
+                </asserts>
+            </test-case>
+            <test-case name="remove_correct">
+                <params>
+                    <param name="action_string" type="String">remove 2</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">rem</assert>
+                    <assert name="parameter" type="int" action="EQUALS">2</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">STRING_EMPTY</assert>
+                </asserts>
+            </test-case>
+            <test-case name="remove_fail1">
+                <params>
+                    <param name="action_string" type="String">remove</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: missing parameter</assert>
+                </asserts>
+            </test-case>
+            <test-case name="remove_fail2">
+                <params>
+                    <param name="action_string" type="String">remove 1 2</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: excessive parameter(s)</assert>
+                </asserts>
+            </test-case>
+            <test-case name="print_correct">
+                <params>
+                    <param name="action_string" type="String">print</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">prt</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">STRING_EMPTY</assert>
+                </asserts>
+            </test-case>
+            <test-case name="print_fail">
+                <params>
+                    <param name="action_string" type="String">print 123</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: excessive parameter(s)</assert>
+                </asserts>
+            </test-case>
+            <test-case name="input_fail">
+                <params>
+                    <param name="action_string" type="String">OBJECT_NULL</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: no command provided</assert>
+                </asserts>
+            </test-case>
+            <test-case name="param_fail">
+                <params>
+                    <param name="action_string" type="String">add 5f3</param>
+                </params>
+                <asserts>
+                    <assert name="command" type="String" action="EQUALS">udf</assert>
+                    <assert name="parameter" type="int" action="EQUALS">0</assert>
+                    <assert name="error_msg" type="String" action="EQUALS">Error: cannot parse parameter</assert>
+                </asserts>
+            </test-case>
+        </method>
+    </class>
+</tests>
